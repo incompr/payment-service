@@ -21,7 +21,7 @@ public class Account {
     }
 
 
-       public long getId() {
+    public long getId() {
         return id;
     }
 
@@ -38,16 +38,18 @@ public class Account {
         this.balance = balance;
     }
 
+    //  public void putMoney(long moneyAmount) {
+    //     this.balance = balance + moneyAmount;
+    // }
+
+
     @Override
     public String toString() {
         return "Account_id=" + id + ", balance=" + balance;
     }
 
-
-    public void deposit(long deposit) {
-        this.balance = balance + deposit;
-    }
 }
+
 
 
 
