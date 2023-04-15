@@ -2,11 +2,12 @@ package payment.service.skf.models;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "operations")
 public class Operation {
-
 
     @Column(name = "account_id")
     private int accountId;
@@ -20,28 +21,27 @@ public class Operation {
     private long operationAmount;
     @Column(name = "sender_id")
     private int senderId;
-
+    @Column(name = "timestamp")
+    private LocalDateTime timestamp;
 
     public Operation() {
-
     }
 
-
-    public Operation(int accountId, long operationId, int operationType, long operationAmount) {
+    public Operation(int accountId, int operationType, long operationAmount, int senderId, LocalDateTime timestamp) {
         this.accountId = accountId;
-        this.operationId = operationId;
-        this.operationType = operationType;
-        this.operationAmount = operationAmount;
-    }
-
-    public Operation(int accountId, long operationId, int operationType, long operationAmount, int senderId) {
-        this.accountId = accountId;
-        this.operationId = operationId;
         this.operationType = operationType;
         this.operationAmount = operationAmount;
         this.senderId = senderId;
+        this.timestamp = timestamp;
     }
 
+    public Operation(int accountId) {
+        this.accountId = accountId;
+        this.operationType = 0;
+        this.operationAmount = 0;
+        this.senderId = accountId;
+        this.timestamp = LocalDateTime.now();
+    }
 
     public int getAccountId() {
         return accountId;
@@ -81,5 +81,13 @@ public class Operation {
 
     public void setSenderId(int senderId) {
         this.senderId = senderId;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }
