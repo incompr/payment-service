@@ -2,6 +2,7 @@
 spring rest api example
 
 server.port=8081
+dump-payment-service.sql
 
 db:
 user postgres
