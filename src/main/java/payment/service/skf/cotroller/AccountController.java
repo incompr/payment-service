@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import payment.service.skf.exception.AccountNotFoundException;
 import payment.service.skf.exception.NegativeAmountException;
@@ -14,19 +15,21 @@ import payment.service.skf.models.Operation;
 import payment.service.skf.services.AccountService;
 import payment.service.skf.services.OperationService;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/account")
 public class AccountController {
 
     private final AccountService accountService;
     private final OperationService operationService;
-    private final ModelMapper modelMapper;
+    //private final ModelMapper modelMapper;
 
     @Autowired
-    public AccountController(AccountService accountService, @Lazy OperationService operationService, ModelMapper modelMapper) {
+    public AccountController(AccountService accountService, @Lazy OperationService operationService) {
         this.accountService = accountService;
         this.operationService = operationService;
-        this.modelMapper = modelMapper;
+        //this.modelMapper = modelMapper;
     }
 
     @ResponseBody
@@ -37,22 +40,25 @@ public class AccountController {
         return account;
     }
 
+    @Transactional
     @ResponseBody
     @GetMapping(value = "takeMoney/id={id}&amount={amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity takeMoney(@PathVariable("id") int id, @PathVariable("amount") long amount) throws AccountNotFoundException, NotEnoughMoneyException {
         Account foundAccount = accountService.findOne(id);
         foundAccount.takeMoney(amount);
         accountService.save(foundAccount);
+        operationService.save(new Operation(id, 1, amount, id, LocalDateTime.now()));
         return new ResponseEntity(1, "Success");
     }
 
+    @Transactional
     @ResponseBody
     @GetMapping(value = "putMoney/id={id}&amount={amount}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putMoney(@PathVariable("id") int id, @PathVariable("amount") long amount) throws AccountNotFoundException, NegativeAmountException {
         Account foundAccount = accountService.findOne(id);
         foundAccount.putMoney(amount);
         accountService.save(foundAccount);
-        //  operationService.save(new Operation(id, 2, amount, id, System.currentTimeMillis()));
+        operationService.save(new Operation(id, 2, amount, id, LocalDateTime.now()));
         return new ResponseEntity(1, "Success");
     }
 
