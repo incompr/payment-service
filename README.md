@@ -8,6 +8,8 @@ db:
 user postgres
 pass 123
 
+![db](https://github.com/incompr/payment-service/blob/main/db.png)
+
 operation type
 0 - запрос баланса
 1 - put money
